@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeSmith · 字体与排版工作台</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141414'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23b8462a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">A</span>
+    <span class="name">TypeSmith</span>
+    <span class="ver" id="version">1.0.0</span>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="specimen" class="active">样张</button>
+    <button data-tab="breaks">断行</button>
+    <button data-tab="pages">分页</button>
+    <button data-tab="compare">对照</button>
+  </nav>
+  <div class="status" id="status">就绪</div>
+</header>
+
+<main class="layout">
+
+  <!-- ---------------------------------------------------------- 控制栏 -->
+  <aside class="panel">
+
+    <section class="group" id="group-font">
+      <h2>字体</h2>
+      <label class="field">
+        <span>衬线角色</span>
+        <select id="font-select"></select>
+      </label>
+      <p class="hint" id="font-hint">—</p>
+      <ul class="roles" id="roles"></ul>
+    </section>
+
+    <section class="group" id="group-specimen">
+      <h2>样张</h2>
+      <label class="field">
+        <span>宽度 <b id="v-width">900</b> px</span>
+        <input type="range" id="width" min="600" max="1400" step="20" value="900">
+      </label>
+      <label class="field">
+        <span>高度 <b id="v-height">1180</b> px</span>
+        <input type="range" id="height" min="700" max="1800" step="20" value="1180">
+      </label>
+    </section>
+
+    <section class="group" id="group-text">
+      <h2>文本</h2>
+      <textarea id="text" spellcheck="false" rows="7"></textarea>
+      <p class="hint">支持 <code># 标题</code>、<code>## 二级</code>、<code>---</code> 分隔线、<code>&gt; 引言</code>。</p>
+    </section>
+
+    <section class="group" id="group-type">
+      <h2>排版参数</h2>
+      <label class="field">
+        <span>字号 <b id="v-size">15</b> px</span>
+        <input type="range" id="size" min="8" max="40" step="0.5" value="15">
+      </label>
+      <label class="field">
+        <span>行距 <b id="v-leading">1.60</b> ×</span>
+        <input type="range" id="leading" min="1.1" max="2.4" step="0.02" value="1.6">
+      </label>
+      <label class="field">
+        <span>版心 <b id="v-measure">380</b> px</span>
+        <input type="range" id="measure" min="120" max="700" step="4" value="380">
+      </label>
+      <label class="field">
+        <span>容差 <b id="v-tolerance">4.0</b></span>
+        <input type="range" id="tolerance" min="0.5" max="12" step="0.1" value="4">
+      </label>
+      <label class="field">
+        <span>页边距 <b id="v-margin">84</b> px</span>
+        <input type="range" id="margin" min="24" max="200" step="4" value="84">
+      </label>
+      <div class="row">
+        <label class="field check"><input type="checkbox" id="justify" checked> <span>两端对齐</span></label>
+      </div>
+    </section>
+
+    <section class="group" id="group-page">
+      <h2>页</h2>
+      <div class="row">
+        <button class="btn" id="page-prev">←</button>
+        <span class="pageno" id="page-no">1</span>
+        <button class="btn" id="page-next">→</button>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>导出</h2>
+      <div class="row">
+        <button class="btn wide" id="download">下载 PNG</button>
+        <button class="btn wide" id="download-svg">下载 SVG</button>
+      </div>
+      <p class="hint">PNG 由引擎的扫描线栅格化直接产出，SVG 是真二次贝塞尔路径。</p>
+    </section>
+
+  </aside>
+
+  <!-- ---------------------------------------------------------- 画布 -->
+  <section class="stage">
+
+    <div class="stage-head">
+      <h1 id="stage-title">字体样张</h1>
+      <p id="stage-sub">一页里压进字距、曲线、断行、避头尾与字形覆盖</p>
+    </div>
+
+    <!-- 样张 -->
+    <div class="view" id="view-specimen">
+      <div class="paper"><img id="img-specimen" alt="字体样张"></div>
+    </div>
+
+    <!-- 断行 -->
+    <div class="view" id="view-breaks" hidden>
+      <div class="totals" id="totals"></div>
+      <div class="lines" id="lines"></div>
+      <div class="legend">
+        <span><i class="sw tight"></i>收紧</span>
+        <span><i class="sw ok"></i>合适</span>
+        <span><i class="sw loose"></i>偏松</span>
+        <span><i class="sw bad"></i>过松</span>
+        <span class="note">bar = |ratio|，ratio 是胶的伸缩比例</span>
+      </div>
+    </div>
+
+    <!-- 分页 -->
+    <div class="view" id="view-pages" hidden>
+      <div class="paper"><img id="img-page" alt="分页预览"></div>
+    </div>
+
+    <!-- 对照 -->
+    <div class="view" id="view-compare" hidden>
+      <div class="paper"><img id="img-compare" alt="断行对照"></div>
+      <p class="hint below">左：贪心断行（塞不下就断）。右：Knuth–Plass（整段求最短路）。同一段文字、同一行宽。</p>
+    </div>
+
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

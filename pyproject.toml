@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "typesmith"
+version = "1.0.0"
+description = "零依赖的字体解析与排版引擎：TrueType 轮廓、GPOS 字距、Knuth–Plass 断行、PNG/SVG 输出"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "遥か" }]
+keywords = ["typography", "truetype", "knuth-plass", "rasterizer", "layout", "font"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Text Processing :: Fonts",
+    "Topic :: Text Processing :: Layout",
+]
+dependencies = []
+
+[project.scripts]
+typesmith = "typesmith.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/18971181532/typesmith"
+Source = "https://github.com/18971181532/typesmith"
+
+[tool.setuptools]
+packages = ["typesmith"]
+
+[tool.setuptools.package-data]
+typesmith = ["py.typed"]
